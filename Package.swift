@@ -15,7 +15,12 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "Plume"
+            name: "Plume",
+            dependencies: [],
+            path: "Sources/Plume",
+            resources: [
+                .process("Resources")
+            ]
         ),
     ]
 )
