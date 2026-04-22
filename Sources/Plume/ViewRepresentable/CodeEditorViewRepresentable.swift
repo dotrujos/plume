@@ -31,6 +31,13 @@ struct CodeEditorViewRepresentable: NSViewRepresentable {
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         
+        let lineNumberView = LineNumberRulerView(scrollView: scrollView, orientation: .verticalRuler)
+        lineNumberView.clientView = textView
+        lineNumberView.ruleThickness = 40
+        
+        scrollView.verticalRulerView = lineNumberView
+        scrollView.hasVerticalRuler = true
+        scrollView.rulersVisible = true
         scrollView.documentView = textView
         return scrollView
     }
@@ -41,6 +48,8 @@ struct CodeEditorViewRepresentable: NSViewRepresentable {
         if textView.string != text {
             textView.textStorage?.setAttributedString(highlighter.highlight(code: text))
         }
+        
+        nsView.verticalRulerView?.needsDisplay = true
     }
     
     func makeCoordinator() -> Coordinator {
