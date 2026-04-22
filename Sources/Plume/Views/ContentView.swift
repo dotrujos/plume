@@ -21,13 +21,14 @@ struct ContentView: View {
         \\end{document}
         """
     
+    let samplePDF = URL(string: "https://www.thecampusqdl.com/uploads/files/pdf_sample_2.pdf")
     var body: some View {
         NavigationSplitView {
             List {
                 Label("main.tex", systemImage: "doc.text")
             }
             .navigationTitle("Projeto atual")
-        } detail: {
+        } content: {
             VStack(spacing: 0) {
                 CodeEditorViewRepresentable(text: $source)
                     .frame(minWidth: 400, minHeight: 300)
@@ -41,6 +42,19 @@ struct ContentView: View {
                 .padding(8)
                 .background(Color(NSColor.windowBackgroundColor))
             }
+        } detail: {
+            Group {
+                if let url = samplePDF {
+                    PreviewPDFViewRepresentable(url: url)
+                } else {
+                    ContentUnavailableView(
+                        "Nenhum pDF",
+                        systemImage: "pdfselection",
+                        description: Text("Compile o código para gerar o documento.")
+                    )
+                }
+            }
+            .navigationTitle("Preview")
         }
         .toolbar {
             ToolbarItem(placement: .automatic) {
