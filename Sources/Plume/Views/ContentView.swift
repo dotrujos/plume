@@ -9,32 +9,33 @@ import SwiftUI
 import CodeEditor
 
 struct ContentView: View {
-    @State private var source: String = """
-        \\documentclass{article}
-        \\begin{titlepage}
-            \\title{Meu Documento LaTeX}
-            \\author{Gabriel}
-        \\end{titlepage}
-        \\begin{document}
-            \\makefile
-            Olá, este é o editor Plume!
-        \\end{document}
-        """
+    @StateObject private var viewModel = ContentViewModel()
     
-    let samplePDF = URL(string: "https://www.thecampusqdl.com/uploads/files/pdf_sample_2.pdf")
     var body: some View {
         NavigationSplitView {
             List {
-                Label("main.tex", systemImage: "doc.text")
+                Section(header: Text("Projeto")) {
+                    OutlineGroup(viewModel.files, id: \.self, children: \.contents) { file in
+                        Label(
+                            file.name,
+                            systemImage: file.isDirectory ? "folder.fill" : "doc"
+                        )
+                        .onAppear {
+                            if file.isDirectory && (file.contents?.isEmpty ?? false) {
+                                viewModel.loadSubFiles(for: file)
+                            }
+                        }
+                    }
+                }
             }
             .navigationTitle("Projeto atual")
         } content: {
             VStack(spacing: 0) {
-                CodeEditorViewRepresentable(text: $source)
+                CodeEditorViewRepresentable(text: $viewModel.source)
                     .frame(minWidth: 400, minHeight: 300)
                 
                 HStack {
-                    Text("Linhas: \(source.components(separatedBy: .newlines).count)")
+                    Text("Linhas: \(viewModel.lineCount)")
                     Spacer()
                     Text("UTF-8")
                 }
@@ -44,11 +45,11 @@ struct ContentView: View {
             }
         } detail: {
             Group {
-                if let url = samplePDF {
+                if let url = viewModel.samplePDF {
                     PreviewPDFViewRepresentable(url: url)
                 } else {
                     ContentUnavailableView(
-                        "Nenhum pDF",
+                        "Nenhum PDF",
                         systemImage: "pdfselection",
                         description: Text("Compile o código para gerar o documento.")
                     )
@@ -63,8 +64,10 @@ struct ContentView: View {
                 } label: {
                     Label("Compilar", systemImage: "play.fill")
                 }
-                
             }
+        }
+        .onAppear {
+            viewModel.initialLoad()
         }
     }
 }

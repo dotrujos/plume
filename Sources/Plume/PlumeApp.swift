@@ -8,9 +8,12 @@ import AppKit
 struct PlumeApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    @StateObject var fileController = FileController()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(fileController)
         }
     }
 }
