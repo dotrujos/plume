@@ -16,7 +16,7 @@ class SyntaxHighlighter {
         attributedString.addAttribute(.font, value: NSFont.monospacedSystemFont(ofSize: 13, weight: .regular), range: range)
         
         let patterns: [String: NSColor] = [
-            "\\\\[a-zA-Z]+": .systemPurple,
+            "\\\\[a-zA-Z]+": .systemPink,
             "\\%.*": .systemGreen,
             "\\$.*?\\$": .systemGray,
             "\\[.*?\\]": .systemOrange
